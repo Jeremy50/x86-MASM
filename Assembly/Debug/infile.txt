@@ -1,0 +1,4 @@
+Welcome to COMSC-260
+In Module 10, we will introduce HLL interface with ASM
+
+It is a test file to run inline ASM commands in C++
