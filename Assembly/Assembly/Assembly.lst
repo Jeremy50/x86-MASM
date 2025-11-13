@@ -1,8 +1,8 @@
-Microsoft (R) Macro Assembler Version 14.38.33133.0	    11/09/25 16:47:57
-Assign11.asm						     Page 1 - 1
+Microsoft (R) Macro Assembler Version 14.38.33133.0	    11/12/25 23:06:51
+Lab12.asm						     Page 1 - 1
 
 
-				; Encode and Decode a string using ROL and ROR
+				; Subtract two integers, each with a size larger than 32 bits
 
 				include Irvine32.inc
 			      C ; Include file for Irvine32.lib             (Irvine32.inc)
@@ -769,129 +769,66 @@ Assign11.asm						     Page 1 - 1
 				includelib Irvine32.lib
 
  00000000			.data
- = 00000080			MAXSIZE = 128
- 00000000 50 6C 65 61 73	textPrmpt byte "Please enter one plain text:", 0
-	   65 20 65 6E 74
-	   65 72 20 6F 6E
-	   65 20 70 6C 61
-	   69 6E 20 74 65
-	   78 74 3A 00
- 0000001D 54 68 65 20 70	encDisp   byte "The plain text after encoded:", 0
-	   6C 61 69 6E 20
-	   74 65 78 74 20
-	   61 66 74 65 72
-	   20 65 6E 63 6F
-	   64 65 64 3A 00
- 0000003B 54 68 65 20 70	decDisp   byte "The plain text after decoded:", 0
-	   6C 61 69 6E 20
-	   74 65 78 74 20
-	   61 66 74 65 72
-	   20 64 65 63 6F
-	   64 65 64 3A 00
- 00000059  00000080 [		buf byte MAXSIZE dup(0)
-	    00
+ 00000000			a qword 0A2B2A40674981234h
+	   A2B2A40674981234
+ 00000008			b qword 080108700B0234502h
+	   80108700B0234502
+ 00000010  00000001 [		r qword 1 dup(0)
+	    0000000000000000
 	   ]
- 000000D9 FB 03 02 FD 00	key sbyte -5, 3, 2, -3, 0, 5, 2, -4, 7, 9
-	   05 02 FC 07 09
+ 00000018 54 68 65 20 64	msg byte "The difference equals ", 0
+	   69 66 66 65 72
+	   65 6E 63 65 20
+	   65 71 75 61 6C
+	   73 20 00
+ = 00000002			num_dwords = sizeof a / type dword
 
  00000000			.code
- 00000000			main proc
- 00000000  E8 00000011			call Prompt
- 00000005  E8 00000030			call Encode
- 0000000A  E8 0000007A			call Decode
+ 00000000			main PROC
+
+ 00000000  BE 00000000 R		mov esi, offset a
+ 00000005  BF 00000008 R		mov edi, offset b
+ 0000000A  BB 00000010 R		mov ebx, offset r
+ 0000000F  B9 00000002			mov ecx, num_dwords
+ 00000014  E8 0000002F			call ExtendedSub
+
+ 00000019  BA 00000018 R		mov edx, offset msg
+ 0000001E  E8 00000000 E		call WriteString
+
+ 00000023  BE 00000010 R		mov esi, offset r
+ 00000028  83 C6 08			add esi, num_dwords * type dword
+ 0000002B  B9 00000002			mov ecx, num_dwords
+
+ 00000030				L1:
+ 00000030  83 EE 04				sub esi, type dword
+ 00000033  8B 06				mov eax, [esi]
+ 00000035  E8 00000000 E			call WriteHex
+ 0000003A  E2 F4				loop L1
+
+ 0000003C  E8 00000000 E		call Crlf
 					exit
- 0000000F  6A 00	   *	    push   +000000000h
- 00000011  E8 00000000 E   *	    call   ExitProcess
- 00000016			main endp
+ 00000041  6A 00	   *	    push   +000000000h
+ 00000043  E8 00000000 E   *	    call   ExitProcess
 
- 00000016			Prompt proc
+ 00000048			main ENDP
 
- 00000016  BA 00000000 R		mov edx, offset textPrmpt
- 0000001B  E8 00000000 E		call WriteString
- 00000020  E8 00000000 E		call Crlf
-
- 00000025  BA 00000059 R		mov edx, offset buf
- 0000002A  B9 00000080			mov ecx, sizeof buf
- 0000002F  E8 00000000 E		call ReadString
- 00000034  E8 00000000 E		call Crlf
- 00000039  C3				ret
-
- 0000003A			Prompt endp
-
- 0000003A			Encode proc
-
- 0000003A  BE 00000059 R		mov esi, offset buf
- 0000003F  BF 00000000			mov edi, 0
- 00000044  B9 00000080			mov ecx, sizeof buf
-					
- 00000049				L1:
-
- 00000049  51					push ecx
- 0000004A  8A 8F 000000D9 R			mov cl, key[edi]
- 00000050  8A 06				mov al, [esi]
- 00000052  D2 C0				rol al, cl
- 00000054  88 06				mov [esi], al
- 00000056  59					pop ecx
-
- 00000057  46					inc esi
- 00000058  47					inc edi
- 00000059  83 FF 0A				cmp edi, lengthof key
-						
- 0000005C  75 05				jne E1
- 0000005E  BF 00000000					mov edi, 0
- 00000063					E1:
- 00000063  E2 E4					loop L1
-
- 00000065  BA 0000001D R		mov edx, offset encDisp
- 0000006A  E8 00000000 E		call WriteString
- 0000006F  E8 00000000 E		call Crlf
-
- 00000074  BA 00000059 R		mov edx, offset buf
- 00000079  E8 00000000 E		call WriteString
- 0000007E  E8 00000000 E		call Crlf
- 00000083  E8 00000000 E		call Crlf
- 00000088  C3				ret
-
- 00000089			Encode endp
-
- 00000089			Decode proc
-
- 00000089  BE 00000059 R		mov esi, offset buf
- 0000008E  BF 00000000			mov edi, 0
- 00000093  B9 00000080			mov ecx, lengthof buf
-					
- 00000098				L1:
-
- 00000098  51					push ecx
- 00000099  8A 8F 000000D9 R			mov cl, key[edi]
- 0000009F  8A 06				mov al, [esi]
- 000000A1  D2 C8				ror al, cl
- 000000A3  88 06				mov [esi], al
- 000000A5  59					pop ecx
-
- 000000A6  46					inc esi
- 000000A7  47					inc edi
- 000000A8  83 FF 0A				cmp edi, lengthof key
-						
- 000000AB  75 05				jne E1
- 000000AD  BF 00000000					mov edi, 0
- 000000B2					E1:
- 000000B2  E2 E4					loop L1
-
- 000000B4  BA 0000003B R		mov edx, offset decDisp
- 000000B9  E8 00000000 E		call WriteString
- 000000BE  E8 00000000 E		call Crlf
-
- 000000C3  BA 00000059 R		mov edx, offset buf
- 000000C8  E8 00000000 E		call WriteString
- 000000CD  E8 00000000 E		call Crlf
- 000000D2  C3				ret
-
- 000000D3			Decode endp
+ 00000048			ExtendedSub proc
+ 00000048  BA 00000000			mov edx, 0
+ 0000004D  F8				clc
+ 0000004E				L1:
+ 0000004E  8B 04 16				mov eax, [esi + edx]
+ 00000051  1B 04 17				sbb eax, [edi + edx]
+ 00000054  89 04 13				mov [ebx + edx], eax
+ 00000057  66| 9C				pushf
+ 00000059  83 C2 04				add edx, type dword
+ 0000005C  66| 9D				popf
+ 0000005E  E2 EE				loop L1
+ 00000060  C3				ret
+ 00000061			ExtendedSub endp
 
 				end main
-Microsoft (R) Macro Assembler Version 14.38.33133.0	    11/09/25 16:47:57
-Assign11.asm						     Symbols 2 - 1
+Microsoft (R) Macro Assembler Version 14.38.33133.0	    11/12/25 23:06:51
+Lab12.asm						     Symbols 2 - 1
 
 
 
@@ -984,8 +921,8 @@ Segments and Groups:
 
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
-_DATA  . . . . . . . . . . . . .	32 Bit	 000000E3 Para	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 000000D3 Para	  Public  'CODE'	
+_DATA  . . . . . . . . . . . . .	32 Bit	 0000002F Para	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 00000061 Para	  Public  'CODE'	
 
 
 Procedures, parameters, and locals:
@@ -998,16 +935,12 @@ Clrscr . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 CreateFileA  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 CreateOutputFile . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 Crlf . . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-Decode . . . . . . . . . . . . .	P Near	 00000089 _TEXT	Length= 0000004A Public STDCALL
-  L1 . . . . . . . . . . . . . .	L Near	 00000098 _TEXT	
-  E1 . . . . . . . . . . . . . .	L Near	 000000B2 _TEXT	
 Delay  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 DumpMem  . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 DumpRegs . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-Encode . . . . . . . . . . . . .	P Near	 0000003A _TEXT	Length= 0000004F Public STDCALL
-  L1 . . . . . . . . . . . . . .	L Near	 00000049 _TEXT	
-  E1 . . . . . . . . . . . . . .	L Near	 00000063 _TEXT	
 ExitProcess  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+ExtendedSub  . . . . . . . . . .	P Near	 00000048 _TEXT	Length= 00000019 Public STDCALL
+  L1 . . . . . . . . . . . . . .	L Near	 0000004E _TEXT	
 FileTimeToDosDateTime  . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 FileTimeToSystemTime . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 FlushConsoleInputBuffer  . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
@@ -1046,7 +979,6 @@ OpenInputFile  . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 ParseDecimal32 . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 ParseInteger32 . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 PeekConsoleInputA  . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-Prompt . . . . . . . . . . . . .	P Near	 00000016 _TEXT	Length= 00000024 Public STDCALL
 Random32 . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 RandomRange  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 Randomize  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
@@ -1099,7 +1031,8 @@ WriteStackFrame  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteToFile  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteWindowsMsg  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000016 Public STDCALL
+main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000048 Public STDCALL
+  L1 . . . . . . . . . . . . . .	L Near	 00000030 _TEXT	
 printf . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 scanf  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 wsprintfA  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
@@ -1191,7 +1124,6 @@ KEY_EVENT  . . . . . . . . . . .	Number	 00000001h
 KEY_MASKS  . . . . . . . . . . .	Number	 0000001Fh   
 LEFT_ALT_PRESSED . . . . . . . .	Number	 00000002h   
 LEFT_CTRL_PRESSED  . . . . . . .	Number	 00000008h   
-MAXSIZE  . . . . . . . . . . . .	Number	 00000080h   
 MB_ABORTRETRYIGNORE  . . . . . .	Number	 00000002h   
 MB_APPLMODAL . . . . . . . . . .	Number	 00000000h   
 MB_CANCELTRYCONTINUE . . . . . .	Number	 00000006h   
@@ -1319,17 +1251,15 @@ VK_UP  . . . . . . . . . . . . .	Number	 00000026h
 WINDOW_BUFFER_SIZE_EVENT . . . .	Number	 00000004h   
 WriteConsoleOutputCharacter  . .	Text   	 WriteConsoleOutputCharacterA
 WriteConsole . . . . . . . . . .	Text   	 WriteConsoleA
+a  . . . . . . . . . . . . . . .	QWord	 00000000 _DATA	
 black  . . . . . . . . . . . . .	Number	 00000000h   
 blue . . . . . . . . . . . . . .	Number	 00000001h   
 brown  . . . . . . . . . . . . .	Number	 00000006h   
-buf  . . . . . . . . . . . . . .	Byte	 00000059 _DATA	
+b  . . . . . . . . . . . . . . .	QWord	 00000008 _DATA	
 cyan . . . . . . . . . . . . . .	Number	 00000003h   
-decDisp  . . . . . . . . . . . .	Byte	 0000003B _DATA	
-encDisp  . . . . . . . . . . . .	Byte	 0000001D _DATA	
 exit . . . . . . . . . . . . . .	Text   	 INVOKE ExitProcess,0
 gray . . . . . . . . . . . . . .	Number	 00000008h   
 green  . . . . . . . . . . . . .	Number	 00000002h   
-key  . . . . . . . . . . . . . .	Byte	 000000D9 _DATA	
 lightBlue  . . . . . . . . . . .	Number	 00000009h   
 lightCyan  . . . . . . . . . . .	Number	 0000000Bh   
 lightGray  . . . . . . . . . . .	Number	 00000007h   
@@ -1337,8 +1267,10 @@ lightGreen . . . . . . . . . . .	Number	 0000000Ah
 lightMagenta . . . . . . . . . .	Number	 0000000Dh   
 lightRed . . . . . . . . . . . .	Number	 0000000Ch   
 magenta  . . . . . . . . . . . .	Number	 00000005h   
+msg  . . . . . . . . . . . . . .	Byte	 00000018 _DATA	
+num_dwords . . . . . . . . . . .	Number	 00000002h   
 red  . . . . . . . . . . . . . .	Number	 00000004h   
-textPrmpt  . . . . . . . . . . .	Byte	 00000000 _DATA	
+r  . . . . . . . . . . . . . . .	QWord	 00000010 _DATA	
 white  . . . . . . . . . . . . .	Number	 0000000Fh   
 wsprintf . . . . . . . . . . . .	Text   	 wsprintfA
 yellow . . . . . . . . . . . . .	Number	 0000000Eh   
