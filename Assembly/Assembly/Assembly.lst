@@ -1,10 +1,10 @@
-Microsoft (R) Macro Assembler Version 14.50.35717.0	    11/17/25 02:17:43
-Assign12.asm						     Page 1 - 1
+Microsoft (R) Macro Assembler Version 14.50.35717.0	    11/19/25 23:36:13
+Lab13.asm						     Page 1 - 1
 
 
-				; Add two decimal integers of arbitrary size
+				; Add random numbers to an array in 3 different ways
 
-				include Irvine32.inc
+				include irvine32.inc
 			      C ; Include file for Irvine32.lib             (Irvine32.inc)
 			      C 
 			      C ;OPTION CASEMAP:NONE		; optional: make identifiers case-sensitive
@@ -769,132 +769,167 @@ Assign12.asm						     Page 1 - 1
 				includelib irvine32.lib
 
  00000000			.data
- 00000000 4536			packed_1a word 4536h
- 00000002 7297			packed_1b word 7297h
- 00000004  00000020 [		sum_1 dword 32 dup(0)
+ = 00000019			count = 25
+ = 000000C8			upper = 200
+ =-00000064			lower = -100
+ 00000000  00000019 [		array dword count dup(0)
 	    00000000
 	   ]
-
- 00000084 67345620		packed_2a dword 67345620h
- 00000088 54496342		packed_2b dword 54496342h
- 0000008C  00000020 [		sum_2 dword 32 dup(0)
-	    00000000
-	   ]
-
- 0000010C			packed_3a qword 6734562000346521h
-	   6734562000346521
- 00000114			packed_3b qword 5449634205738261h
-	   5449634205738261
- 0000011C  00000020 [		sum_3 dword 32 dup(0)
-	    00000000
-	   ]
-
- 0000019C 00			hit_nz byte 0
-
+ 00000064 3D 3D 3D 20 54	out1 byte "=== The output from ArrayFill1 ===", 0
+	   68 65 20 6F 75
+	   74 70 75 74 20
+	   66 72 6F 6D 20
+	   41 72 72 61 79
+	   46 69 6C 6C 31
+	   20 3D 3D 3D 00
+ 00000087 3D 3D 3D 20 54	out2 byte "=== The output from ArrayFill2 ===", 0
+	   68 65 20 6F 75
+	   74 70 75 74 20
+	   66 72 6F 6D 20
+	   41 72 72 61 79
+	   46 69 6C 6C 32
+	   20 3D 3D 3D 00
+ 000000AA 3D 3D 3D 20 54	out3 byte "=== The output from ArrayFill3 ===", 0
+	   68 65 20 6F 75
+	   74 70 75 74 20
+	   66 72 6F 6D 20
+	   41 72 72 61 79
+	   46 69 6C 6C 33
+	   20 3D 3D 3D 00
 
  00000000			.code
  00000000			main proc
 
- 00000000  BE 00000000 R		mov esi, offset packed_1a
- 00000005  BF 00000002 R		mov edi, offset packed_1b
- 0000000A  BA 00000004 R		mov edx, offset sum_1
- 0000000F  B9 00000002			mov ecx, sizeof packed_1a
- 00000014  E8 00000039			call AddPacked
+ 00000000  68 00000000 R		push offset array
+ 00000005  6A 19			push count
+ 00000007  68 000000C8			push upper
+ 0000000C  6A 9C			push lower
+ 0000000E  E8 0000005A			call ArrayFill1
+ 00000013  BA 00000064 R		mov edx, offset out1
+ 00000018  E8 000000B7			call DispArray
+ 0000001D  E8 00000000 E		call Crlf
 
- 00000019  BE 00000084 R		mov esi, offset packed_2a
- 0000001E  BF 00000088 R		mov edi, offset packed_2b
- 00000023  BA 0000008C R		mov edx, offset sum_2
- 00000028  B9 00000004			mov ecx, sizeof packed_2a
- 0000002D  E8 00000020			call AddPacked
+ 00000022  68 00000000 R		push offset array
+ 00000027  6A 19			push count
+ 00000029  68 000000C8			push upper
+ 0000002E  6A 9C			push lower
+ 00000030  E8 00000059			call ArrayFill2
+ 00000035  BA 00000087 R		mov edx, offset out2
+ 0000003A  E8 00000095			call DispArray
+ 0000003F  E8 00000000 E		call Crlf
 
- 00000032  BE 0000010C R		mov esi, offset packed_3a
- 00000037  BF 00000114 R		mov edi, offset packed_3b
- 0000003C  BA 0000011C R		mov edx, offset sum_3
- 00000041  B9 00000008			mov ecx, sizeof packed_3a
- 00000046  E8 00000007			call AddPacked
+ 00000044  68 00000000 R		push offset array
+ 00000049  6A 19			push count
+ 0000004B  68 000000C8			push upper
+ 00000050  6A 9C			push lower
+ 00000052  E8 00000059			call ArrayFill3
+ 00000057  BA 000000AA R		mov edx, offset out3
+ 0000005C  E8 00000073			call DispArray
+ 00000061  E8 00000000 E		call Crlf
 
 					exit
- 0000004B  6A 00	   *	    push   +000000000h
- 0000004D  E8 00000000 E   *	    call   ExitProcess
+ 00000066  6A 00	   *	    push   +000000000h
+ 00000068  E8 00000000 E   *	    call   ExitProcess
+ 0000006D			main endp
 
- 00000052			main endp
+ 0000006D			ArrayFill1 proc
 
- 00000052			AddPacked proc
+ 0000006D  55				push ebp
+ 0000006E  8B EC			mov ebp, esp
 
- 00000052  B8 00000000			mov eax, 0
- 00000057  BB 00000000			mov ebx, 0
- 0000005C  51				push ecx
+ 00000070  8B 7D 14			mov edi, [ebp + 20]
+ 00000073  8B 4D 10			mov ecx, [ebp + 16]
+ 00000076				L1:
 
- 0000005D  F8				clc
- 0000005E  66| 9C			pushf
+ 00000076  8B 45 0C				mov eax, [ebp + 12]
+ 00000079  2B 45 08				sub eax, [ebp + 8]
+ 0000007C  40					inc eax
+ 0000007D  E8 00000000 E			call RandomRange
+ 00000082  03 45 08				add eax, [ebp + 8]
+ 00000085  89 07				mov [edi], eax
 
- 00000060				L1:
+ 00000087  83 C7 04				add edi, type dword
+ 0000008A  E2 EA				loop L1
 
- 00000060  66| 9D				popf
- 00000062  8A 04 1E				mov al, byte ptr [esi+ebx]
- 00000065  12 04 1F				adc al, byte ptr [edi+ebx]
- 00000068  27					daa
- 00000069  88 04 1A				mov byte ptr [edx+ebx], al
- 0000006C  66| 9C				pushf
+ 0000008C  5D				pop ebp
+ 0000008D  C3				ret
 
- 0000006E  43					inc ebx
- 0000006F  E2 EF				loop L1
+ 0000008E			ArrayFill1 endp
 
- 00000071  66| 9D			popf
- 00000073  B0 00			mov al, 0
- 00000075  66| 9C			pushf
- 00000077  14 00			adc al, 0
- 00000079  66| 9D			popf
- 0000007B  88 04 1A			mov byte ptr [edx+ebx], al
+ 0000008E			ArrayFill2 proc
 
- 0000007E  59				pop ecx
- 0000007F  73 08			jnc L2
- 00000081  41				inc ecx
- 00000082  C6 05 0000019C R		mov hit_nz, 0
-	   00
+ 0000008E  C8 0010 00			enter 16, 0
 
- 00000089				L2:
+ 00000092  8B 7D 14			mov edi, [ebp + 20]
+ 00000095  8B 4D 10			mov ecx, [ebp + 16]
+ 00000098				L1:
 
- 00000089  B8 00000000				mov eax, 0
- 0000008E  8A 04 1A				mov al, byte ptr [edx+ebx]
+ 00000098  8B 45 0C				mov eax, [ebp + 12]
+ 0000009B  2B 45 08				sub eax, [ebp + 8]
+ 0000009E  40					inc eax
+ 0000009F  E8 00000000 E			call RandomRange
+ 000000A4  03 45 08				add eax, [ebp + 8]
+ 000000A7  89 07				mov [edi], eax
 
- 00000091  50					push eax
- 00000092  24 F0				and al, 11110000b
- 00000094  C0 E8 04				shr al, 4
- 00000097  E8 00000011				call Disp
- 0000009C  58					pop eax
+ 000000A9  83 C7 04				add edi, type dword
+ 000000AC  E2 EA				loop L1
 
- 0000009D  24 0F				and al, 1111b
- 0000009F  E8 00000009				call Disp
+ 000000AE  C9				leave
+ 000000AF  C3				ret
 
- 000000A4  4B					dec ebx
- 000000A5  E2 E2				loop L2
+ 000000B0			ArrayFill2 endp
 
- 000000A7  E8 00000000 E		call Crlf
+ 000000B0			ArrayFill3 proc
+					LOCAL larrayPtr:PTR DWORD, lcount:DWORD, lupper:DWORD, llower:DWORD
 
- 000000AC  C3				ret
+ 000000B0  55		   *	    push   ebp
+ 000000B1  8B EC	   *	    mov    ebp, esp
+ 000000B3  83 C4 F0	   *	    add    esp, 0FFFFFFF0h
+ 000000B6  8B 7D 14			mov edi, [ebp + 20]
+ 000000B9  8B 4D 10			mov ecx, [ebp + 16]
+ 000000BC				L1:
 
- 000000AD			AddPacked endp
+ 000000BC  8B 45 0C				mov eax, [ebp + 12]
+ 000000BF  2B 45 08				sub eax, [ebp + 8]
+ 000000C2  40					inc eax
+ 000000C3  E8 00000000 E			call RandomRange
+ 000000C8  03 45 08				add eax, [ebp + 8]
+ 000000CB  89 07				mov [edi], eax
 
- 000000AD			Disp proc
+ 000000CD  83 C7 04				add edi, type dword
+ 000000D0  E2 EA				loop L1
 
- 000000AD  3C 00			cmp al, 0
- 000000AF  75 09			jnz L1
- 000000B1  80 3D 0000019C R		cmp hit_nz, 0
-	   00
- 000000B8  74 0C			je L2
+					ret
+ 000000D2  C9		   *	    leave  
+ 000000D3  C3		   *	    ret    00000h
 
- 000000BA				L1:
- 000000BA  E8 00000000 E			call WriteDec
- 000000BF  C6 05 0000019C R			mov hit_nz, 1
-	   01
- 000000C6  C3				L2: ret
+ 000000D4			ArrayFill3 endp
+Lab13.asm(114) : warning A6004:procedure argument or local not referenced : larrayPtr
+Lab13.asm(114) : warning A6004:procedure argument or local not referenced : lcount
+Lab13.asm(114) : warning A6004:procedure argument or local not referenced : lupper
+Lab13.asm(114) : warning A6004:procedure argument or local not referenced : llower
 
- 000000C7			Disp endp
+ 000000D4			DispArray proc
+
+ 000000D4  E8 00000000 E		call WriteString
+ 000000D9  E8 00000000 E		call Crlf
+
+ 000000DE  B9 00000019			mov ecx, count
+ 000000E3  BF 00000000 R		mov edi, offset array
+ 000000E8				L1:
+ 000000E8  8B 07				mov eax, [edi]
+ 000000EA  E8 00000000 E			call WriteInt
+ 000000EF  E8 00000000 E			call Crlf
+ 000000F4  83 C7 04				add edi, type array
+ 000000F7  E2 EF				loop L1
+
+ 000000F9  C3				ret
+
+ 000000FA			DispArray endp
 
 				end main
-Microsoft (R) Macro Assembler Version 14.50.35717.0	    11/17/25 02:17:43
-Assign12.asm						     Symbols 2 - 1
+Microsoft (R) Macro Assembler Version 14.50.35717.0	    11/19/25 23:36:13
+Lab13.asm						     Symbols 2 - 1
 
 
 
@@ -987,17 +1022,24 @@ Segments and Groups:
 
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
-_DATA  . . . . . . . . . . . . .	32 Bit	 0000019D Para	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 000000C7 Para	  Public  'CODE'	
+_DATA  . . . . . . . . . . . . .	32 Bit	 000000CD Para	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 000000FA Para	  Public  'CODE'	
 
 
 Procedures, parameters, and locals:
 
                 N a m e                 Type     Value    Attr
 
-AddPacked  . . . . . . . . . . .	P Near	 00000052 _TEXT	Length= 0000005B Public STDCALL
-  L1 . . . . . . . . . . . . . .	L Near	 00000060 _TEXT	
-  L2 . . . . . . . . . . . . . .	L Near	 00000089 _TEXT	
+ArrayFill1 . . . . . . . . . . .	P Near	 0000006D _TEXT	Length= 00000021 Public STDCALL
+  L1 . . . . . . . . . . . . . .	L Near	 00000076 _TEXT	
+ArrayFill2 . . . . . . . . . . .	P Near	 0000008E _TEXT	Length= 00000022 Public STDCALL
+  L1 . . . . . . . . . . . . . .	L Near	 00000098 _TEXT	
+ArrayFill3 . . . . . . . . . . .	P Near	 000000B0 _TEXT	Length= 00000024 Public STDCALL
+  larrayPtr  . . . . . . . . . .	DWord	 bp - 00000004
+  lcount . . . . . . . . . . . .	DWord	 bp - 00000008
+  lupper . . . . . . . . . . . .	DWord	 bp - 0000000C
+  llower . . . . . . . . . . . .	DWord	 bp - 00000010
+  L1 . . . . . . . . . . . . . .	L Near	 000000BC _TEXT	
 CloseFile  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 CloseHandle  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 Clrscr . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
@@ -1005,9 +1047,8 @@ CreateFileA  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 CreateOutputFile . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 Crlf . . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 Delay  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-Disp . . . . . . . . . . . . . .	P Near	 000000AD _TEXT	Length= 0000001A Public STDCALL
-  L1 . . . . . . . . . . . . . .	L Near	 000000BA _TEXT	
-  L2 . . . . . . . . . . . . . .	L Near	 000000C6 _TEXT	
+DispArray  . . . . . . . . . . .	P Near	 000000D4 _TEXT	Length= 00000026 Public STDCALL
+  L1 . . . . . . . . . . . . . .	L Near	 000000E8 _TEXT	
 DumpMem  . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 DumpRegs . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 ExitProcess  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
@@ -1101,7 +1142,7 @@ WriteStackFrame  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteToFile  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteWindowsMsg  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000052 Public STDCALL
+main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 0000006D Public STDCALL
 printf . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 scanf  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 wsprintfA  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
@@ -1320,34 +1361,31 @@ VK_UP  . . . . . . . . . . . . .	Number	 00000026h
 WINDOW_BUFFER_SIZE_EVENT . . . .	Number	 00000004h   
 WriteConsoleOutputCharacter  . .	Text   	 WriteConsoleOutputCharacterA
 WriteConsole . . . . . . . . . .	Text   	 WriteConsoleA
+array  . . . . . . . . . . . . .	DWord	 00000000 _DATA	
 black  . . . . . . . . . . . . .	Number	 00000000h   
 blue . . . . . . . . . . . . . .	Number	 00000001h   
 brown  . . . . . . . . . . . . .	Number	 00000006h   
+count  . . . . . . . . . . . . .	Number	 00000019h   
 cyan . . . . . . . . . . . . . .	Number	 00000003h   
 exit . . . . . . . . . . . . . .	Text   	 INVOKE ExitProcess,0
 gray . . . . . . . . . . . . . .	Number	 00000008h   
 green  . . . . . . . . . . . . .	Number	 00000002h   
-hit_nz . . . . . . . . . . . . .	Byte	 0000019C _DATA	
 lightBlue  . . . . . . . . . . .	Number	 00000009h   
 lightCyan  . . . . . . . . . . .	Number	 0000000Bh   
 lightGray  . . . . . . . . . . .	Number	 00000007h   
 lightGreen . . . . . . . . . . .	Number	 0000000Ah   
 lightMagenta . . . . . . . . . .	Number	 0000000Dh   
 lightRed . . . . . . . . . . . .	Number	 0000000Ch   
+lower  . . . . . . . . . . . . .	Number	 -00000064h   
 magenta  . . . . . . . . . . . .	Number	 00000005h   
-packed_1a  . . . . . . . . . . .	Word	 00000000 _DATA	
-packed_1b  . . . . . . . . . . .	Word	 00000002 _DATA	
-packed_2a  . . . . . . . . . . .	DWord	 00000084 _DATA	
-packed_2b  . . . . . . . . . . .	DWord	 00000088 _DATA	
-packed_3a  . . . . . . . . . . .	QWord	 0000010C _DATA	
-packed_3b  . . . . . . . . . . .	QWord	 00000114 _DATA	
+out1 . . . . . . . . . . . . . .	Byte	 00000064 _DATA	
+out2 . . . . . . . . . . . . . .	Byte	 00000087 _DATA	
+out3 . . . . . . . . . . . . . .	Byte	 000000AA _DATA	
 red  . . . . . . . . . . . . . .	Number	 00000004h   
-sum_1  . . . . . . . . . . . . .	DWord	 00000004 _DATA	
-sum_2  . . . . . . . . . . . . .	DWord	 0000008C _DATA	
-sum_3  . . . . . . . . . . . . .	DWord	 0000011C _DATA	
+upper  . . . . . . . . . . . . .	Number	 000000C8h   
 white  . . . . . . . . . . . . .	Number	 0000000Fh   
 wsprintf . . . . . . . . . . . .	Text   	 wsprintfA
 yellow . . . . . . . . . . . . .	Number	 0000000Eh   
 
-	   0 Warnings
+	   4 Warnings
 	   0 Errors
