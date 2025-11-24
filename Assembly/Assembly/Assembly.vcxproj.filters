@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <MASM Include="Lab13.asm">
+    <MASM Include="Assign13.asm">
       <Filter>Source Files</Filter>
     </MASM>
   </ItemGroup>

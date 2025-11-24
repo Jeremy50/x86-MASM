@@ -1,6 +1,2 @@
-﻿  Assembling Lab13.asm...
-Lab13.asm(114): warning A6004: procedure argument or local not referenced : larrayPtr
-Lab13.asm(114): warning A6004: procedure argument or local not referenced : lcount
-Lab13.asm(114): warning A6004: procedure argument or local not referenced : lupper
-Lab13.asm(114): warning A6004: procedure argument or local not referenced : llower
+﻿  Assembling Assign13.asm...
   Assembly.vcxproj -> C:\Users\jerem\OneDrive\Desktop\x86-Assembly\Assembly\Debug\Assembly.exe
