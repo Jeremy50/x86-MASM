@@ -3,8 +3,12 @@
   "WorkspaceRootPath": "C:\\Users\\jerem\\OneDrive\\Desktop\\x86-Assembly\\Assembly\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{7EBB706A-67C9-4796-A43B-ECE9238FDF52}|Assembly\\Assembly.vcxproj|C:\\Users\\jerem\\OneDrive\\Desktop\\x86-Assembly\\Assembly\\Assembly\\Lab14.asm||{8B382828-6202-11D1-8870-0000F87579D2}",
-      "RelativeMoniker": "D:0:0:{7EBB706A-67C9-4796-A43B-ECE9238FDF52}|Assembly\\Assembly.vcxproj|solutionrelative:Assembly\\Lab14.asm||{8B382828-6202-11D1-8870-0000F87579D2}"
+      "AbsoluteMoniker": "D:0:0:{7EBB706A-67C9-4796-A43B-ECE9238FDF52}|Assembly\\Assembly.vcxproj|C:\\Users\\jerem\\OneDrive\\Desktop\\x86-Assembly\\Assembly\\Assembly\\Assign14.asm||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{7EBB706A-67C9-4796-A43B-ECE9238FDF52}|Assembly\\Assembly.vcxproj|solutionrelative:Assembly\\Assign14.asm||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7EBB706A-67C9-4796-A43B-ECE9238FDF52}|Assembly\\Assembly.vcxproj|C:\\Users\\jerem\\OneDrive\\Desktop\\x86-Assembly\\Assembly\\Assembly\\Lab8.asm||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{7EBB706A-67C9-4796-A43B-ECE9238FDF52}|Assembly\\Assembly.vcxproj|solutionrelative:Assembly\\Lab8.asm||{8B382828-6202-11D1-8870-0000F87579D2}"
     }
   ],
   "DocumentGroupContainers": [
@@ -14,19 +18,32 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 1,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "Lab14.asm",
-              "DocumentMoniker": "C:\\Users\\jerem\\OneDrive\\Desktop\\x86-Assembly\\Assembly\\Assembly\\Lab14.asm",
-              "RelativeDocumentMoniker": "Assembly\\Lab14.asm",
-              "ToolTip": "C:\\Users\\jerem\\OneDrive\\Desktop\\x86-Assembly\\Assembly\\Assembly\\Lab14.asm",
-              "RelativeToolTip": "Assembly\\Lab14.asm",
-              "ViewState": "AgIAAAYAAAAAAAAAAAAAAAgAAAAuAAAAAAAAAA==",
+              "DocumentIndex": 1,
+              "Title": "Lab8.asm",
+              "DocumentMoniker": "C:\\Users\\jerem\\OneDrive\\Desktop\\x86-Assembly\\Assembly\\Assembly\\Lab8.asm",
+              "RelativeDocumentMoniker": "Assembly\\Lab8.asm",
+              "ToolTip": "C:\\Users\\jerem\\OneDrive\\Desktop\\x86-Assembly\\Assembly\\Assembly\\Lab8.asm",
+              "RelativeToolTip": "Assembly\\Lab8.asm",
+              "ViewState": "AgIAACQAAAAAAAAAAAAAADIAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2025-11-27T07:08:09.042Z",
+              "WhenOpened": "2025-12-02T07:11:19.422Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Assign14.asm",
+              "DocumentMoniker": "C:\\Users\\jerem\\OneDrive\\Desktop\\x86-Assembly\\Assembly\\Assembly\\Assign14.asm",
+              "RelativeDocumentMoniker": "Assembly\\Assign14.asm",
+              "ToolTip": "C:\\Users\\jerem\\OneDrive\\Desktop\\x86-Assembly\\Assembly\\Assembly\\Assign14.asm",
+              "RelativeToolTip": "Assembly\\Assign14.asm",
+              "ViewState": "AgIAAAQAAAAAAAAAAAAQwBIAAAAMAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2025-12-02T06:49:23.012Z",
               "EditorCaption": ""
             }
           ]
