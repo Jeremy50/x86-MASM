@@ -1,8 +1,8 @@
-Microsoft (R) Macro Assembler Version 14.50.35719.0	    12/09/25 00:57:04
-Assign15.asm						     Page 1 - 1
+Microsoft (R) Macro Assembler Version 14.50.35719.0	    12/09/25 23:19:31
+x86\Final.asm						     Page 1 - 1
 
 
-				; Find the first occurence of one string in another
+				; Final Exam
 
 				include Irvine32.inc
 			      C ; Include file for Irvine32.lib             (Irvine32.inc)
@@ -769,173 +769,76 @@ Assign15.asm						     Page 1 - 1
 				includelib Irvine32.lib
 
  00000000			.data
-
- 00000000 30 31 41 42 41	target byte "01ABAAAAAABABCC45ABC9012", 0
-	   41 41 41 41 41
-	   42 41 42 43 43
-	   34 35 41 42 43
-	   39 30 31 32 00
- 00000019 41 41 41 42 41	source byte "AAABA", 0
-	   00
-
- 0000001F 54 68 65 20 74	targetMsg byte "The target string is: ", 0
-	   61 72 67 65 74
-	   20 73 74 72 69
-	   6E 67 20 69 73
-	   3A 20 00
- 00000036 54 68 65 20 73	sourceMsg byte "The source string is: ", 0
-	   6F 75 72 63 65
-	   20 73 74 72 69
-	   6E 67 20 69 73
-	   3A 20 00
- 0000004D 53 6F 75 72 63	notFoundMsg byte "Source string not found in Target string.", 0
-	   65 20 73 74 72
-	   69 6E 67 20 6E
-	   6F 74 20 66 6F
-	   75 6E 64 20 69
-	   6E 20 54 61 72
-	   67 65 74 20 73
-	   74 72 69 6E 67
-	   2E 00
- 00000077 53 6F 75 72 63	foundMsg_p1 byte "Source string found at position ", 0
-	   65 20 73 74 72
-	   69 6E 67 20 66
-	   6F 75 6E 64 20
-	   61 74 20 70 6F
-	   73 69 74 69 6F
-	   6E 20 00
- 00000098 20 69 6E 20 54	foundMsg_p2 byte " in Target string (counting from zero).", 0
-	   61 72 67 65 74
-	   20 73 74 72 69
-	   6E 67 20 28 63
-	   6F 75 6E 74 69
-	   6E 67 20 66 72
-	   6F 6D 20 7A 65
-	   72 6F 29 2E 00
+ 00000000 41 42 43 44 45	targetStr byte "ABCDE", 10 dup(0)
+	   0000000A [
+	    00
+	   ]
+ 0000000F 46 47 48 00		sourceStr byte "FGH", 0
 
  00000000			.code
-
-				Str_find proto, pTarget: ptr byte, pSource: ptr byte
-				Str_find_i proto, pTarget: ptr byte, pSource: ptr byte
-				dispRes proto
+				Str_concat proto targetPtr:ptr byte, sourcePtr:ptr byte
+				GetEndStr proto strPtr:ptr byte
 
  00000000			main proc
 
-					invoke Str_find, offset target, offset source
- 00000000  68 00000019 R   *	    push   dword  ptr OFFSET FLAT: source
- 00000005  68 00000000 R   *	    push   dword  ptr OFFSET FLAT: target
- 0000000A  E8 0000000C	   *	    call   Str_find
-					invoke dispRes
- 0000000F  E8 00000050	   *	    call   dispRes
+ 00000000  BA 00000000 R		mov edx, offset targetStr
+ 00000005  E8 00000000 E		call WriteString
+ 0000000A  E8 00000000 E		call Crlf
+
+					invoke Str_concat, addr targetStr, addr sourceStr
+ 0000000F  68 0000000F R   *	    push   OFFSET sourceStr
+ 00000014  68 00000000 R   *	    push   OFFSET targetStr
+ 00000019  E8 00000016	   *	    call   Str_concat
+
+ 0000001E  BA 00000000 R		mov edx, offset targetStr
+ 00000023  E8 00000000 E		call WriteString
+ 00000028  E8 00000000 E		call Crlf
+
 					exit
- 00000014  6A 00	   *	    push   +000000000h
- 00000016  E8 00000000 E   *	    call   ExitProcess
+ 0000002D  6A 00	   *	    push   +000000000h
+ 0000002F  E8 00000000 E   *	    call   ExitProcess
 
- 0000001B			main endp
+ 00000034			main endp
 
- 0000001B			Str_find proc, pTarget: ptr byte, pSource: ptr byte
-					
- 0000001B  55		   *	    push   ebp
- 0000001C  8B EC	   *	    mov    ebp, esp
- 0000001E  B9 00000019			mov ecx, lengthof target
- 00000023  83 E9 06			sub ecx, lengthof source
- 00000026  41				inc ecx
- 00000027  B8 00000000			mov eax, 0
+ 00000034			Str_concat proc targetPtr:ptr byte, sourcePtr:ptr byte
 
- 0000002C  8B 55 08			mov edx, pTarget
- 0000002F				L1:
-						invoke Str_find_i, edx, offset source
- 0000002F  68 00000019 R   *	    push   dword  ptr OFFSET FLAT: source
- 00000034  52		   *	    push   edx
- 00000035  E8 0000000A	   *	    call   Str_find_i
- 0000003A  74 04				jz Done
- 0000003C  42					inc edx
- 0000003D  40					inc eax
- 0000003E  E2 EF				loop L1
+					; Find length of source
+ 00000034  55		   *	    push   ebp
+ 00000035  8B EC	   *	    mov    ebp, esp
+ 00000037  8B 7D 0C			mov edi, sourcePtr
+ 0000003A  B0 00			mov al, 0
+ 0000003C  B9 FFFFFFFF			mov ecx, 0FFFFFFFFh
 
- 00000040				Done:
+ 00000041  FC				cld
+ 00000042  F2/ AE			repne scasb
+ 00000044  4F				dec edi
+ 00000045  2B 7D 0C			sub edi, sourcePtr
+ 00000048  57				push edi
+
+					; Move to end of target
+ 00000049  8B 7D 08			mov edi, targetPtr
+ 0000004C  B0 00			mov al, 0
+ 0000004E  B9 FFFFFFFF			mov ecx, 0FFFFFFFFh
+
+ 00000053  FC				cld
+ 00000054  F2/ AE			repne scasb
+ 00000056  4F				dec edi
+
+					; Copy source to end of target
+ 00000057  8B 75 0C			mov esi, sourcePtr
+ 0000005A  59				pop ecx
+ 0000005B  F3/ A4			rep movsb
+
 					ret
- 00000040  C9		   *	    leave  
- 00000041  C2 0008	   *	    ret    00008h
+ 0000005D  C9		   *	    leave  
+ 0000005E  C2 0008	   *	    ret    00008h
 
- 00000044			Str_find endp
-Assign15.asm(49) : warning A6004:procedure argument or local not referenced : pSource
+ 00000061			Str_concat endp
 
- 00000044			Str_find_i proc uses eax ecx edx, pTarget: ptr byte, pSource: ptr byte
-					
- 00000044  55		   *	    push   ebp
- 00000045  8B EC	   *	    mov    ebp, esp
- 00000047  50		   *	    push   eax
- 00000048  51		   *	    push   ecx
- 00000049  52		   *	    push   edx
- 0000004A  8B 75 0C			mov esi, pSource
- 0000004D  8B 7D 08			mov edi, pTarget
-					invoke Str_length, pSource
- 00000050  FF 75 0C	   *	    push   dword  ptr ss:[ebp]+00000000Ch
- 00000053  E8 00000000 E   *	    call   Str_length
- 00000058  8B C8			mov ecx, eax
-					
- 0000005A  FC				cld
- 0000005B  F3/ A6			repe cmpsb
-					ret
- 0000005D  5A		   *	    pop    edx
- 0000005E  59		   *	    pop    ecx
- 0000005F  58		   *	    pop    eax
- 00000060  C9		   *	    leave  
- 00000061  C2 0008	   *	    ret    00008h
-
- 00000064			Str_find_i endp
-
- 00000064			dispRes proc uses eax edx
-
- 00000064  50		   *	    push   eax
- 00000065  52		   *	    push   edx
- 00000066  66| 9C			pushf
-
- 00000068  BA 0000001F R		mov edx, offset targetMsg
-					invoke WriteString
- 0000006D  E8 00000000 E   *	    call   WriteString
- 00000072  BA 00000000 R		mov edx, offset target
-					invoke WriteString
- 00000077  E8 00000000 E   *	    call   WriteString
-					invoke Crlf
- 0000007C  E8 00000000 E   *	    call   Crlf
-
- 00000081  BA 00000036 R		mov edx, offset sourceMsg
-					invoke WriteString
- 00000086  E8 00000000 E   *	    call   WriteString
- 0000008B  BA 00000019 R		mov edx, offset source
-					invoke WriteString
- 00000090  E8 00000000 E   *	    call   WriteString
-					invoke Crlf
- 00000095  E8 00000000 E   *	    call   Crlf
-
- 0000009A  66| 9D			popf
- 0000009C  74 0C			jz Found
- 0000009E				NotFound:
- 0000009E  BA 0000004D R			mov edx, offset notFoundMsg
- 000000A3  E8 00000000 E			call WriteString
- 000000A8  EB 19				jmp Done
- 000000AA				Found:
- 000000AA  BA 00000077 R			mov edx, offset foundMsg_p1
- 000000AF  E8 00000000 E			call WriteString
- 000000B4  E8 00000000 E			call WriteDec
- 000000B9  BA 00000098 R			mov edx, offset foundMsg_p2
- 000000BE  E8 00000000 E			call WriteString
-
- 000000C3				Done:
-						invoke Crlf
- 000000C3  E8 00000000 E   *	    call   Crlf
-						ret
- 000000C8  5A		   *	    pop    edx
- 000000C9  58		   *	    pop    eax
- 000000CA  C3		   *	    ret    00000h
-
- 000000CB			dispRes endp
 
 				end main
-Microsoft (R) Macro Assembler Version 14.50.35719.0	    12/09/25 00:57:04
-Assign15.asm						     Symbols 2 - 1
+Microsoft (R) Macro Assembler Version 14.50.35719.0	    12/09/25 23:19:31
+x86\Final.asm						     Symbols 2 - 1
 
 
 
@@ -1028,8 +931,8 @@ Segments and Groups:
 
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
-_DATA  . . . . . . . . . . . . .	32 Bit	 000000C0 Para	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 000000CB Para	  Public  'CODE'	
+_DATA  . . . . . . . . . . . . .	32 Bit	 00000013 Para	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 00000061 Para	  Public  'CODE'	
 
 
 Procedures, parameters, and locals:
@@ -1057,6 +960,7 @@ GetConsoleCursorInfo . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 GetConsoleMode . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 GetConsoleScreenBufferInfo . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 GetDateTime  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+GetEndStr  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 GetFileTime  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 GetKeyState  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 GetLastError . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
@@ -1113,15 +1017,10 @@ ShowFPUStack . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 Sleep  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 StrLength  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 Str_compare  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+Str_concat . . . . . . . . . . .	P Near	 00000034 _TEXT	Length= 0000002D Public STDCALL
+  targetPtr  . . . . . . . . . .	DWord	 bp + 00000008
+  sourcePtr  . . . . . . . . . .	DWord	 bp + 0000000C
 Str_copy . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-Str_find_i . . . . . . . . . . .	P Near	 00000044 _TEXT	Length= 00000020 Public STDCALL
-  pTarget  . . . . . . . . . . .	DWord	 bp + 00000008
-  pSource  . . . . . . . . . . .	DWord	 bp + 0000000C
-Str_find . . . . . . . . . . . .	P Near	 0000001B _TEXT	Length= 00000029 Public STDCALL
-  pTarget  . . . . . . . . . . .	DWord	 bp + 00000008
-  pSource  . . . . . . . . . . .	DWord	 bp + 0000000C
-  L1 . . . . . . . . . . . . . .	L Near	 0000002F _TEXT	
-  Done . . . . . . . . . . . . .	L Near	 00000040 _TEXT	
 Str_length . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 Str_trim . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 Str_ucase  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
@@ -1144,11 +1043,7 @@ WriteStackFrame  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteToFile  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteWindowsMsg  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-dispRes  . . . . . . . . . . . .	P Near	 00000064 _TEXT	Length= 00000067 Public STDCALL
-  NotFound . . . . . . . . . . .	L Near	 0000009E _TEXT	
-  Found  . . . . . . . . . . . .	L Near	 000000AA _TEXT	
-  Done . . . . . . . . . . . . .	L Near	 000000C3 _TEXT	
-main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 0000001B Public STDCALL
+main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000034 Public STDCALL
 printf . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 scanf  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 wsprintfA  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
@@ -1372,8 +1267,6 @@ blue . . . . . . . . . . . . . .	Number	 00000001h
 brown  . . . . . . . . . . . . .	Number	 00000006h   
 cyan . . . . . . . . . . . . . .	Number	 00000003h   
 exit . . . . . . . . . . . . . .	Text   	 INVOKE ExitProcess,0
-foundMsg_p1  . . . . . . . . . .	Byte	 00000077 _DATA	
-foundMsg_p2  . . . . . . . . . .	Byte	 00000098 _DATA	
 gray . . . . . . . . . . . . . .	Number	 00000008h   
 green  . . . . . . . . . . . . .	Number	 00000002h   
 lightBlue  . . . . . . . . . . .	Number	 00000009h   
@@ -1383,15 +1276,12 @@ lightGreen . . . . . . . . . . .	Number	 0000000Ah
 lightMagenta . . . . . . . . . .	Number	 0000000Dh   
 lightRed . . . . . . . . . . . .	Number	 0000000Ch   
 magenta  . . . . . . . . . . . .	Number	 00000005h   
-notFoundMsg  . . . . . . . . . .	Byte	 0000004D _DATA	
 red  . . . . . . . . . . . . . .	Number	 00000004h   
-sourceMsg  . . . . . . . . . . .	Byte	 00000036 _DATA	
-source . . . . . . . . . . . . .	Byte	 00000019 _DATA	
-targetMsg  . . . . . . . . . . .	Byte	 0000001F _DATA	
-target . . . . . . . . . . . . .	Byte	 00000000 _DATA	
+sourceStr  . . . . . . . . . . .	Byte	 0000000F _DATA	
+targetStr  . . . . . . . . . . .	Byte	 00000000 _DATA	
 white  . . . . . . . . . . . . .	Number	 0000000Fh   
 wsprintf . . . . . . . . . . . .	Text   	 wsprintfA
 yellow . . . . . . . . . . . . .	Number	 0000000Eh   
 
-	   1 Warnings
+	   0 Warnings
 	   0 Errors
